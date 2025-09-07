@@ -1,4 +1,4 @@
-# ChartLensAI — Image → Trading Scenarios (FastAPI + Gemini)
+# SageMakerAI — Image → Trading Scenarios (FastAPI + Gemini)
 
 Upload a trading chart (or provide a direct image URL), pick timeframe/strategy, and get **AI-generated buy/sell scenarios** — entries, stops, T1–T3, R:R, and **max_time_wait_min** to avoid sideways chop.
 
@@ -29,8 +29,8 @@ Upload a trading chart (or provide a direct image URL), pick timeframe/strategy,
 
 ### 2) Clone & install
 ```bash
-git clone https://github.com/<you>/chartlensai.git
-cd chartlensai
+git clone https://github.com/<you>/SageMakerai.git
+cd SageMakerai
 cp .env.example .env            # put your real GEMINI_API_KEY here (do not commit)
 python -m venv .venv
 # macOS/Linux:
