@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SageMakerAI – Image → Trading Scenarios</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="description" content="Upload a trading chart and get AI-generated buy/sell scenarios. Educational use only." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./styles.css?v=3" />
+</head>
+<body class="bg-slate-950 text-slate-100">
+  <!-- Top disclaimer banner -->
+  <div id="banner" class="banner hidden">
+    <div class="max-w-6xl mx-auto px-4 py-2 flex flex-col sm:flex-row items-start sm:items-center gap-2">
+      <div class="text-xs sm:text-sm leading-snug">
+        <strong>Educational use only.</strong> This app provides <strong>AI-generated</strong> scenarios and is <strong>not financial advice</strong>.
+        Trading involves risk. You are solely responsible for any losses.
+      </div>
+      <div class="flex-1"></div>
+      <label class="agree inline-flex items-center gap-2 text-xs">
+        <input id="agree" type="checkbox" class="accent-cyan-400">
+        <span>I understand and agree</span>
+      </label>
+      <button id="dismiss" class="btn btn-sm">Hide</button>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/70 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="brand">SageMaker<span class="text-cyan-400">AI</span></div>
+        <span class="badge">AI-generated</span>
+      </div>
+      <nav class="text-xs sm:text-sm text-slate-300 flex items-center gap-3">
+        <a href="https://github.com" target="_blank" rel="noreferrer" class="link">GitHub</a>
+        <span class="sep">•</span>
+        <span class="text-slate-400">Gemini-powered ✨</span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-6xl mx-auto px-4 py-6 grid lg:grid-cols-2 gap-6">
+    <!-- LEFT: Form + Preview -->
+    <section class="space-y-6">
+      <div class="card">
+        <div class="flex gap-2 text-sm">
+          <button id="tabUpload" class="tab active">Upload</button>
+          <button id="tabUrl" class="tab">Image URL</button>
+        </div>
+
+        <!-- Upload form -->
+        <form id="formUpload" class="mt-4 grid gap-4">
+          <div>
+            <label class="label">Chart image</label>
+            <input id="file" type="file" accept="image/*" class="file-input" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="label">Timeframe</label>
+              <select id="timeframeU" class="select">
+                <option>5m</option><option>15m</option><option>30m</option>
+                <option>60m</option><option>1D</option><option>1W</option>
+              </select>
+            </div>
+            <div>
+              <label class="label">Strategy</label>
+              <select id="strategyU" class="select">
+                <option>auto</option><option>smc</option><option>ict</option>
+                <option>smt</option><option>sr</option><option>custom</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid gap-3">
+            <div>
+              <label class="label">Intention (optional)</label>
+              <input id="intentionU" class="input" placeholder="e.g., Look for pullback buys" />
+            </div>
+            <div>
+              <label class="label">Question (optional)</label>
+              <input id="questionU" class="input" placeholder="e.g., Both buy/sell with RR & max wait?" />
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <button id="btnUpload" class="btn-primary" type="submit" disabled>Analyze (Upload)</button>
+            <button id="btnClear" class="btn" type="button">Clear</button>
+            <div id="busy" class="hidden text-xs text-slate-400 flex items-center gap-2">
+              <span class="loader"></span> analyzing…
+            </div>
+          </div>
+        </form>
+
+        <!-- URL form -->
+        <form id="formUrl" class="mt-4 grid gap-4 hidden">
+          <div>
+            <label class="label">Image URL</label>
+            <input id="imageUrl" class="input" placeholder="https://..." />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="label">Timeframe</label>
+              <select id="timeframeJ" class="select">
+                <option>5m</option><option>15m</option><option>30m</option>
+                <option>60m</option><option>1D</option><option>1W</option>
+              </select>
+            </div>
+            <div>
+              <label class="label">Strategy</label>
+              <select id="strategyJ" class="select">
+                <option>auto</option><option>smc</option><option>ict</option>
+                <option>smt</option><option>sr</option><option>custom</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid gap-3">
+            <div>
+              <label class="label">Intention (optional)</label>
+              <input id="intentionJ" class="input" />
+            </div>
+            <div>
+              <label class="label">Question (optional)</label>
+              <input id="questionJ" class="input" />
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button id="btnJson" class="btn-primary" type="submit" disabled>Analyze (URL)</button>
+            <div id="busy2" class="hidden text-xs text-slate-400 flex items-center gap-2">
+              <span class="loader"></span> analyzing…
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Preview + overlay -->
+      <div class="card">
+        <div class="flex items-center justify-between">
+          <h3 class="title-sm">Preview</h3>
+          <div class="flex items-center gap-2">
+            <button id="btnDownloadOverlay" class="btn btn-sm" title="Download overlay image">Download</button>
+          </div>
+        </div>
+        <div class="preview-wrap relative">
+          <img id="imgPreview" class="rounded-xl border border-slate-800 max-h-[420px] object-contain" />
+          <canvas id="overlay" class="overlay"></canvas>
+        </div>
+        <p class="text-xs text-slate-400 mt-2">Overlay shows scenario lines using relative Y positions (no price scale needed).</p>
+      </div>
+    </section>
+
+    <!-- RIGHT: Scenarios -->
+    <section class="space-y-6">
+      <div class="card">
+        <h3 class="title-sm mb-3">Scenarios</h3>
+        <div id="scenarios" class="grid gap-3"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-900/60">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-xs text-slate-400 leading-relaxed">
+      <p><strong>Disclaimer:</strong> AI-generated output for educational purposes only. Not investment advice. Use at your own risk.</p>
+      <p>By using this site you agree that the authors, maintainers, and hosts are not responsible for any financial losses or damages.</p>
+    </div>
+  </footer>
+
+  <script src="./app.js?v=3" type="module"></script>
+</body>
+</html>

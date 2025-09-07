@@ -1,0 +1,44 @@
+# Env files (keep only the example tracked)
+.env
+.env.*
+!.env.example
+
+# Virtual environments
+.venv/
+.venv*/
+venv/
+env/
+ENV/
+.venvsource/
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Build/output
+build/
+dist/
+
+# Logs
+*.log
+
+# Editors / IDE
+.vscode/
+.idea/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# If you add a JS frontend later
+node_modules/
+web/dist/
+web/build/
