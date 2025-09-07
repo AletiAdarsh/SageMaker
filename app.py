@@ -280,7 +280,7 @@ def normalize_response(d: dict) -> dict:
 
     # fill provider/model/meta defaults if missing (safe no-op if present)
     out.setdefault("provider", "gemini")
-    out.setdefault("model", os.getenv("GEMINI_MODEL", "gemini-2.5-flash"))
+    out.setdefault("model", os.getenv("GEMINI_MODEL", "gemini-1.5-flash"))
     meta = out.get("meta") or {}
     meta.setdefault("received_at", iso_now())
     out["meta"] = meta
